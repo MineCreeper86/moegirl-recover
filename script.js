@@ -1,22 +1,34 @@
 // ==UserScript==
 // @name         萌百恢复屏蔽词
 // @namespace    https://minecreeper.top/
-// @version      0.1.1
+// @version      0.1.2
 // @description  在萌娘百科将屏蔽词恢复原状
 // @author       MineCreeper-矿井小帕
 // @match        *://zh.moegirl.org.cn/*
 // @match        *://mzh.moegirl.org.cn/*
 // @grant        none
 // @run-at       document-idle
+// @license      GPLv3
 // ==/UserScript==
 
 (function() {
-    var pgtitle = document.title.substr(0,document.title.length-18)
+    var pgtitle = decodeURIComponent(location.pathname.substr(1)) //获取页面路径
+    //if(pgtitle=="index.php"){
+        //TODO: index.php获取标题
+    //}
     console.log("页面标题|"+pgtitle);
     const Http = new XMLHttpRequest();
     const url='https://zh.moegirl.org.cn/api.php?action=parse&page='+encodeURIComponent(pgtitle)+'&prop=wikitext&formatversion=2&format=json';
     Http.open("GET", url);
-    if(document.getElementById("mw-content-text").innerHTML.indexOf("♯")!=-1) Http.send();
+    if(document.getElementById("mw-content-text").innerHTML.indexOf("♯")!=-1&&pgtitle.indexOf("Category:")!=0) Http.send();
+    else if(pgtitle.indexOf("Category:")==0){ //处理分类
+        var lnks = document.getElementById("mw-pages").getElementsByClassName("mw-content-ltr")[0].getElementsByTagName("a");
+        console.log(lnks)
+        for (let i in lnks) {
+            console.log()
+            if(lnks[i].innerHTML.indexOf("♯")!=-1) lnks[i].innerHTML = decodeURIComponent(lnks[i].getAttribute("href").substr(1).replace("_"," "));
+        }
+    }
     Http.titlearg = pgtitle;
     Http.onreadystatechange = (e) => {
         var obj = JSON.parse(Http.responseText).parse.wikitext
