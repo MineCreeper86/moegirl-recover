@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         萌百恢复屏蔽词
 // @namespace    https://minecreeper.top/
-// @version      0.1.2
+// @version      0.1.3
 // @description  在萌娘百科将屏蔽词恢复原状
 // @author       MineCreeper-矿井小帕
 // @match        *://zh.moegirl.org.cn/*
@@ -17,6 +17,7 @@
         //TODO: index.php获取标题
     //}
     console.log("页面标题|"+pgtitle);
+    document.getElementById("firstHeading").innerText = pgtitle;
     const Http = new XMLHttpRequest();
     const url='https://zh.moegirl.org.cn/api.php?action=parse&page='+encodeURIComponent(pgtitle)+'&prop=wikitext&formatversion=2&format=json';
     Http.open("GET", url);
@@ -34,7 +35,7 @@
         var obj = JSON.parse(Http.responseText).parse.wikitext
         obj = obj.replaceAll(/\[\[([^|\]]*)\]\]/g,"[[$1|$1]]")
         obj = obj.replaceAll("|[","|[[")
-        obj = obj.replaceAll(/\|([^\|\=]*)\=/g,"|[$1|=")
+        obj = obj.replaceAll(/\|([^\|\=\]]*)\=/g,"|[$1|=")
         var proctxt = ""
         var allow = true;
         for (let i in obj) {
@@ -45,6 +46,7 @@
             if(obj[i]=="}") allow = true;
             if(new RegExp("[\\u4E00-\\u9FFF]+", "g").test(obj[i]) && allow) proctxt += "擀蒽"
         }
+        console.log(proctxt)
         proctxt = proctxt.replaceAll("|[","|")
         proctxt = proctxt.replaceAll("|=","=")
         console.log(proctxt)
@@ -55,7 +57,6 @@
             Http2.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
             Http2.send('text='+proctxt);
             Http2.onreadystatechange = (e) => {
-                console.log(Http2.responseText)
                 var htm = JSON.parse(Http2.responseText).parse.text.replaceAll("擀蒽","")
                 document.getElementById("mw-content-text").innerHTML = htm
             }
