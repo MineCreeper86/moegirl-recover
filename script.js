@@ -1,12 +1,11 @@
 // ==UserScript==
 // @name         萌百恢复屏蔽词
 // @namespace    https://minecreeper.top/
-// @version      0.1
+// @version      0.1.1
 // @description  在萌娘百科将屏蔽词恢复原状
 // @author       MineCreeper-矿井小帕
 // @match        *://zh.moegirl.org.cn/*
 // @match        *://mzh.moegirl.org.cn/*
-// @match        *://*.hmoegirl.com/*
 // @grant        none
 // @run-at       document-idle
 // ==/UserScript==
@@ -22,6 +21,7 @@
     Http.onreadystatechange = (e) => {
         var obj = JSON.parse(Http.responseText).parse.wikitext
         obj = obj.replaceAll(/\[\[([^|\]]*)\]\]/g,"[[$1|$1]]")
+        obj = obj.replaceAll(/\n\|([^\|\=]*)\=/g,"\n|[$1|=")
         var proctxt = ""
         var allow = true;
         for (let i in obj) {
@@ -29,8 +29,12 @@
             if(obj[i]=="[") allow = false;
             if(obj[i]=="{") allow = false;
             if(obj[i]=="|") allow = true;
+            if(obj[i]=="}") allow = true;
             if(new RegExp("[\\u4E00-\\u9FFF]+", "g").test(obj[i]) && allow) proctxt += "擀蒽"
         }
+        proctxt = proctxt.replaceAll("|[","|")
+        proctxt = proctxt.replaceAll("|=","=")
+        console.log(proctxt)
         const url2='https://zh.moegirl.org.cn/api.php?action=parse&format=json&prop=text&formatversion=2';
         if(proctxt!=undefined){
             const Http2 = new XMLHttpRequest();
@@ -44,5 +48,4 @@
             }
         }
     }
-    // Your code here...
 })();
