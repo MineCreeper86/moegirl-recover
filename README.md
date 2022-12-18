@@ -11,4 +11,6 @@
 
 如果对你有帮助，可以向我赞助，感激不尽。
 
+![1671349699.jpg](赞助)
+
 [Greasyfork](https://greasyfork.org/en/scripts/456762-%E8%90%8C%E7%99%BE%E6%81%A2%E5%A4%8D%E5%B1%8F%E8%94%BD%E8%AF%8D)
