@@ -16,12 +16,13 @@
     const Http = new XMLHttpRequest();
     const url='https://zh.moegirl.org.cn/api.php?action=parse&page='+encodeURIComponent(pgtitle)+'&prop=wikitext&formatversion=2&format=json';
     Http.open("GET", url);
-    Http.send();
+    if(document.getElementById("mw-content-text").innerHTML.indexOf("♯")!=-1) Http.send();
     Http.titlearg = pgtitle;
     Http.onreadystatechange = (e) => {
         var obj = JSON.parse(Http.responseText).parse.wikitext
         obj = obj.replaceAll(/\[\[([^|\]]*)\]\]/g,"[[$1|$1]]")
-        obj = obj.replaceAll(/\n\|([^\|\=]*)\=/g,"\n|[$1|=")
+        obj = obj.replaceAll("|[","|[[")
+        obj = obj.replaceAll(/\|([^\|\=]*)\=/g,"|[$1|=")
         var proctxt = ""
         var allow = true;
         for (let i in obj) {
