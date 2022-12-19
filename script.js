@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         萌百恢复屏蔽词
 // @namespace    https://minecreeper.top/
-// @version      0.2.0
+// @version      0.3.0
 // @description  在萌娘百科将屏蔽词恢复原状
 // @author       MineCreeper-矿井小帕
 // @match        *://zh.moegirl.org.cn/*
@@ -47,7 +47,7 @@
             if(obj[i]=="{") allow = false;
             if(obj[i]=="|") allow = true;
             if(obj[i]=="}") allow = true;
-            if(new RegExp("[\\u4E00-\\u9FFF]+", "g").test(obj[i]) && allow) proctxt += "擀蒽"
+            if(new RegExp("[\\u4E00-\\u9FFF]+", "g").test(obj[i]) && allow) proctxt += "蒽"
         }
         proctxt = proctxt.replaceAll("|[","|")
         proctxt = proctxt.replaceAll("|=","=")
@@ -57,9 +57,9 @@
             const Http2 = new XMLHttpRequest();
             Http2.open("POST", url2);
             Http2.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
-            Http2.send('text='+proctxt);
+            Http2.send('text='+encodeURIComponent(proctxt));
             Http2.onreadystatechange = (e) => {
-                var htm = JSON.parse(Http2.responseText).parse.text.replaceAll("擀蒽","")
+                var htm = JSON.parse(Http2.responseText).parse.text.replaceAll("蒽","")
                 document.getElementById("mw-content-text").innerHTML = htm
             }
         }
