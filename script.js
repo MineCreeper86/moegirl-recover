@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         萌百恢复屏蔽词
 // @namespace    https://minecreeper.top/
-// @version      0.1.3
+// @version      0.2.0
 // @description  在萌娘百科将屏蔽词恢复原状
 // @author       MineCreeper-矿井小帕
 // @match        *://zh.moegirl.org.cn/*
 // @match        *://mzh.moegirl.org.cn/*
 // @grant        none
-// @run-at       document-idle
+// @run-at       document-end
 // @license      GPLv3
 // ==/UserScript==
 
@@ -33,9 +33,12 @@
     Http.titlearg = pgtitle;
     Http.onreadystatechange = (e) => {
         var obj = JSON.parse(Http.responseText).parse.wikitext
+        console.log(obj)
         obj = obj.replaceAll(/\[\[([^|\]]*)\]\]/g,"[[$1|$1]]")
         obj = obj.replaceAll("|[","|[[")
-        obj = obj.replaceAll(/\|([^\|\=\]]*)\=/g,"|[$1|=")
+        obj = obj.replaceAll(/\|([^\|\=\]]*)\=/g,"|[$1|=") //基本信息例外
+        obj = obj.replaceAll(/\[\[File\:([^\|\]]*)\|([^\|\]]*)\|([^\|\]]*)\|([^\|\]]*)\]\]/g,"[[File:$1|[$2|[$3|$4]]") //文件例外
+        console.log(obj)
         var proctxt = ""
         var allow = true;
         for (let i in obj) {
@@ -46,7 +49,6 @@
             if(obj[i]=="}") allow = true;
             if(new RegExp("[\\u4E00-\\u9FFF]+", "g").test(obj[i]) && allow) proctxt += "擀蒽"
         }
-        console.log(proctxt)
         proctxt = proctxt.replaceAll("|[","|")
         proctxt = proctxt.replaceAll("|=","=")
         console.log(proctxt)
